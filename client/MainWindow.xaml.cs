@@ -25,16 +25,19 @@ namespace client
         private Bot _bot;
         private RootModel _model;
         private ChannelModel _selectedChannel;
-        
+        private TextBox _input;
+
         public MainWindow()
         {
             InitializeComponent();
         }
-        
+
         private async void OnStartup(object sender, EventArgs e)
         {
             _model = FindResource("Model") as RootModel;
             if (_model == null) throw new Exception("Cannot find model");
+            _input = FindName("Input") as TextBox;
+            if (_input == null) throw new Exception("Cannot find input field");
             _bot = new Bot();
             var guilds = await _bot.Login();
             foreach (var guild in guilds)
@@ -52,17 +55,18 @@ namespace client
                         server.Channels.Add(new ChannelModel(textChannel));
                     }
                 }
+
                 _model.Servers.Add(server);
             }
         }
-        
+
         private async void OnChannelSelected(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (e.NewValue is ChannelModel channel)
             {
                 _model.Messages.Clear();
                 var messages = await channel.FetchMessages();
-                var enumerator =  messages.GetEnumerator();
+                var enumerator = messages.GetEnumerator();
                 while (enumerator.MoveNext())
                 {
                     var message = enumerator.Current;
@@ -71,9 +75,35 @@ namespace client
                         _model.Messages.Add(new MessageModel(userMessage));
                     }
                 }
+
                 enumerator.Dispose();
                 _selectedChannel = channel;
             }
+        }
+
+        private void OnEnter(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return && !Keyboard.IsKeyDown(Key.LeftShift) && !Keyboard.IsKeyDown(Key.RightShift))
+            {
+                OnSend(sender, e);
+                e.Handled = true;
+            }
+        }
+
+        private async void OnSend(object sender, RoutedEventArgs e)
+        {
+            if (_selectedChannel != null)
+            {
+                var text = _input.Text;
+                var message = await _selectedChannel.SendMessage(text);
+                _model.Messages.Add(new MessageModel(message));
+                ClearUserText();
+            }
+        }
+
+        private void ClearUserText()
+        {
+            _input.Text = "";
         }
     }
 }

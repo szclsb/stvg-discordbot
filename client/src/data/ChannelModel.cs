@@ -22,5 +22,10 @@ namespace client.data
             var collection = await _channel.GetMessagesAsync().FlattenAsync();
             return collection.Reverse();
         }
+        
+        public async Task<IUserMessage> SendMessage(string text)
+        {
+            return await _channel.SendMessageAsync(text);
+        }
     }
 }
