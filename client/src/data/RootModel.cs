@@ -8,7 +8,7 @@ namespace client.data
         public ObservableCollection<ServerModel> Servers { get; }
         public ObservableCollection<MessageModel> Messages { get; }
 
-        private int _selectedMessageIndex;
+        private int _selectedMessageIndex = -1;
         public int SelectedMessageIndex
         {
             get => _selectedMessageIndex;

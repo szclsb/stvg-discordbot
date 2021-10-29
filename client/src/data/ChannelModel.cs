@@ -27,5 +27,11 @@ namespace client.data
         {
             return await _channel.SendMessageAsync(text);
         }
+        
+        public async Task<IUserMessage> SendFile(string path, string text)
+        {
+            await using var fs = File.OpenRead(path);
+            return await _channel.SendFileAsync(fs, Path.GetFileName(path), text);
+        }
     }
 }

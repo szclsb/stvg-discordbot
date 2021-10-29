@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Discord;
 
 namespace client.data
@@ -8,6 +9,8 @@ namespace client.data
         private readonly IUserMessage _message;
 
         public string Text => _message.Content;
+        public bool HasAttachment => _message.Attachments.Count > 0;
+        public string AttachmentName => HasAttachment ? _message.Attachments.First().Filename : null;
 
         public MessageModel(IUserMessage message)
         {

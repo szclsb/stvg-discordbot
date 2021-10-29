@@ -12,6 +12,16 @@
         <DataTemplate x:Key="MessageTemplate" DataType="data:MessageModel">
             <TextBlock Text="{Binding Path=Text}"></TextBlock>
         </DataTemplate>
+        <DataTemplate x:Key="MessageAttachmentTemplate" DataType="data:MessageModel">
+            <StackPanel>
+                <ContentPresenter Content="{Binding}"
+                                  ContentTemplate="{StaticResource MessageTemplate}" />
+                <TextBlock Text="{Binding Path=AttachmentName}" />
+            </StackPanel>
+        </DataTemplate>
+        <local:MessageTemplateSelector x:Key="MessageTemplateSelector"
+                                       MessageTemplate="{StaticResource MessageTemplate}"
+                                       MessageAttachmentTemplate="{StaticResource MessageAttachmentTemplate}" />
         <DataTemplate x:Key="ChannelTemplate" DataType="{x:Type data:ChannelModel}">
             <TextBlock Text="{Binding Path=Name}" />
         </DataTemplate>
@@ -28,13 +38,15 @@
                 <Button Click="OnDelete">Delete</Button>
                 <Button Click="OnClear">Cancel</Button>
             </StackPanel>
+            <Button DockPanel.Dock="Left" Click="OnUpload">Upload</Button>
             <TextBox x:Name="Input" AcceptsReturn="True" VerticalScrollBarVisibility="Visible"
                      PreviewKeyDown="OnEnter" />
         </DockPanel>
         <TreeView x:Name="ServerChannelView" Width="200" DockPanel.Dock="Left" ItemsSource="{Binding Path=Servers}"
                   ItemTemplate="{StaticResource ServerTemplate}" SelectedItemChanged="OnChannelSelected" />
         <ListView x:Name="MessageView" ItemsSource="{Binding Path=Messages}"
-                  ItemTemplate="{StaticResource MessageTemplate}" SelectedIndex="{Binding Path=SelectedMessageIndex, Mode=OneWay}"
+                  ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
+                  SelectedIndex="{Binding Path=SelectedMessageIndex, Mode=OneWay}"
                   SelectionChanged="OnMessageSelected" SelectionMode="Single" />
     </DockPanel>
 </Window>
