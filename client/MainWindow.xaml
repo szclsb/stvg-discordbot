@@ -6,9 +6,12 @@
         xmlns:local="clr-namespace:client"
         xmlns:data="clr-namespace:client.data"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="STVG Discord Client" Height="450" Width="800"
         Initialized="OnStartup">
     <Window.Resources>
+        <DataTemplate x:Key="MessageTemplate" DataType="data:MessageModel">
+            <TextBlock Text="{Binding Path=Text}"></TextBlock>
+        </DataTemplate>
         <DataTemplate x:Key="ChannelTemplate" DataType="{x:Type data:ChannelModel}">
             <TextBlock Text="{Binding Path=Name}" />
         </DataTemplate>
@@ -20,6 +23,8 @@
     </Window.Resources>
     <DockPanel DataContext="{StaticResource Model}">
         <TreeView x:Name="ServerChannelView" Width="200" DockPanel.Dock="Left" ItemsSource="{Binding Path=Servers}"
-                  ItemTemplate="{StaticResource ServerTemplate}" />
+                  ItemTemplate="{StaticResource ServerTemplate}" SelectedItemChanged="OnChannelSelected" />
+        <ListView x:Name="MessageView" ItemsSource="{Binding Path=Messages}"
+                  ItemTemplate="{StaticResource MessageTemplate}" />
     </DockPanel>
 </Window>

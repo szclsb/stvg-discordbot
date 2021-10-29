@@ -24,6 +24,7 @@ namespace client
     {
         private Bot _bot;
         private RootModel _model;
+        private ChannelModel _selectedChannel;
         
         public MainWindow()
         {
@@ -52,6 +53,26 @@ namespace client
                     }
                 }
                 _model.Servers.Add(server);
+            }
+        }
+        
+        private async void OnChannelSelected(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (e.NewValue is ChannelModel channel)
+            {
+                _model.Messages.Clear();
+                var messages = await channel.FetchMessages();
+                var enumerator =  messages.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    var message = enumerator.Current;
+                    if (message is IUserMessage userMessage && message.Author.Id == _bot.UserId)
+                    {
+                        _model.Messages.Add(new MessageModel(userMessage));
+                    }
+                }
+                enumerator.Dispose();
+                _selectedChannel = channel;
             }
         }
     }
