@@ -25,6 +25,8 @@
         <DockPanel Height="100" DockPanel.Dock="Bottom">
             <StackPanel DockPanel.Dock="Right" Width="100">
                 <Button Click="OnSend">Send</Button>
+                <Button Click="OnDelete">Delete</Button>
+                <Button Click="OnClear">Cancel</Button>
             </StackPanel>
             <TextBox x:Name="Input" AcceptsReturn="True" VerticalScrollBarVisibility="Visible"
                      PreviewKeyDown="OnEnter" />
@@ -32,6 +34,7 @@
         <TreeView x:Name="ServerChannelView" Width="200" DockPanel.Dock="Left" ItemsSource="{Binding Path=Servers}"
                   ItemTemplate="{StaticResource ServerTemplate}" SelectedItemChanged="OnChannelSelected" />
         <ListView x:Name="MessageView" ItemsSource="{Binding Path=Messages}"
-                  ItemTemplate="{StaticResource MessageTemplate}" />
+                  ItemTemplate="{StaticResource MessageTemplate}" SelectedIndex="{Binding Path=SelectedMessageIndex, Mode=OneWay}"
+                  SelectionChanged="OnMessageSelected" SelectionMode="Single" />
     </DockPanel>
 </Window>

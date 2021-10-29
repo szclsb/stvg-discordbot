@@ -25,6 +25,7 @@ namespace client
         private Bot _bot;
         private RootModel _model;
         private ChannelModel _selectedChannel;
+        private MessageModel _selectedMessage;
         private TextBox _input;
 
         public MainWindow()
@@ -80,6 +81,13 @@ namespace client
                 _selectedChannel = channel;
             }
         }
+        
+        private void OnMessageSelected(object sender, SelectionChangedEventArgs e)
+        {
+            if (!(e.AddedItems.Count > 0 && e.AddedItems[0] is MessageModel message)) return;
+            _selectedMessage = message;
+            _input.Text = message.Text;
+        }
 
         private void OnEnter(object sender, KeyEventArgs e)
         {
@@ -92,18 +100,41 @@ namespace client
 
         private async void OnSend(object sender, RoutedEventArgs e)
         {
-            if (_selectedChannel != null)
+            var text = _input.Text;
+            if (_selectedMessage != null)
             {
-                var text = _input.Text;
+                // update message
+                await _selectedMessage.Edit(text);
+            }
+            else
+            {
+                // send new message
                 var message = await _selectedChannel.SendMessage(text);
                 _model.Messages.Add(new MessageModel(message));
-                ClearUserText();
+                
             }
+            ClearUserText();
         }
 
         private void ClearUserText()
         {
+            _model.SelectedMessageIndex = -1;
             _input.Text = "";
+        }
+        
+        private void OnClear(object sender, RoutedEventArgs e)
+        {
+            ClearUserText();
+        }
+
+        private async void OnDelete(object sender, RoutedEventArgs e)
+        {
+            if (_selectedMessage != null)
+            { 
+                _model.Messages.Remove(_selectedMessage);
+                await _selectedMessage.Delete();
+            }
+            ClearUserText();
         }
     }
 }

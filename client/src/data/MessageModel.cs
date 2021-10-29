@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System.Threading.Tasks;
+using Discord;
 
 namespace client.data
 {
@@ -11,6 +12,17 @@ namespace client.data
         public MessageModel(IUserMessage message)
         {
             _message = message;
+        }
+        
+        public async Task Edit(string text)
+        {
+            await _message.ModifyAsync(props => props.Content = text);
+            OnPropertyChanged("Text");
+        }
+
+        public async Task Delete()
+        {
+            await _message.DeleteAsync();
         }
     }
 }
