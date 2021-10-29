@@ -4,9 +4,22 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:client"
+        xmlns:data="clr-namespace:client.data"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        Title="MainWindow" Height="450" Width="800"
+        Initialized="OnStartup">
+    <Window.Resources>
+        <DataTemplate x:Key="ChannelTemplate" DataType="{x:Type data:ChannelModel}">
+            <TextBlock Text="{Binding Path=Name}" />
+        </DataTemplate>
+        <HierarchicalDataTemplate x:Key="ServerTemplate" DataType="{x:Type data:ServerModel}"
+                                  ItemsSource="{Binding Channels}"
+                                  ItemTemplate="{StaticResource ChannelTemplate}">
+            <TextBlock Text="{Binding Path=Name}" />
+        </HierarchicalDataTemplate>
+    </Window.Resources>
+    <DockPanel DataContext="{StaticResource Model}">
+        <TreeView x:Name="ServerChannelView" Width="200" DockPanel.Dock="Left" ItemsSource="{Binding Path=Servers}"
+                  ItemTemplate="{StaticResource ServerTemplate}" />
+    </DockPanel>
 </Window>

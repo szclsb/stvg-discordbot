@@ -2,8 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:client"
+             xmlns:data="clr-namespace:client.data"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <data:RootModel x:Key="Model" />
     </Application.Resources>
 </Application>

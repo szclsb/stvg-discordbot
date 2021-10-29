@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using client.data;
+using Discord;
 
 namespace client
 {
@@ -20,9 +22,37 @@ namespace client
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Bot _bot;
+        private RootModel _model;
+        
         public MainWindow()
         {
             InitializeComponent();
+        }
+        
+        private async void OnStartup(object sender, EventArgs e)
+        {
+            _model = FindResource("Model") as RootModel;
+            if (_model == null) throw new Exception("Cannot find model");
+            _bot = new Bot();
+            var guilds = await _bot.Login();
+            foreach (var guild in guilds)
+            {
+                var botUser = guild.GetUser(_bot.UserId);
+                var role = guild.Roles.FirstOrDefault(role1 => role1.Name.Equals(botUser.Username));
+                if (role == null) continue;
+                var server = new ServerModel(guild);
+                foreach (var channel in guild.Channels)
+                {
+                    if (channel is ITextChannel textChannel
+                        && channel.PermissionOverwrites.Count > 0
+                        && channel.PermissionOverwrites.Any(permission => permission.TargetId == role.Id))
+                    {
+                        server.Channels.Add(new ChannelModel(textChannel));
+                    }
+                }
+                _model.Servers.Add(server);
+            }
         }
     }
 }
