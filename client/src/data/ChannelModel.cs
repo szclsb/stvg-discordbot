@@ -16,5 +16,22 @@ namespace client.data
         {
             _channel = channel;
         }
+        
+        public async Task<IEnumerable<IMessage>> FetchMessages()
+        {
+            var collection = await _channel.GetMessagesAsync().FlattenAsync();
+            return collection.Reverse();
+        }
+        
+        public async Task<IUserMessage> SendMessage(string text)
+        {
+            return await _channel.SendMessageAsync(text);
+        }
+        
+        public async Task<IUserMessage> SendFile(string path, string text)
+        {
+            await using var fs = File.OpenRead(path);
+            return await _channel.SendFileAsync(fs, Path.GetFileName(path), text);
+        }
     }
 }

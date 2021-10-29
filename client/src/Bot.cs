@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using client.data;
 
 namespace client
 {
     public class Bot
     {
         private readonly DiscordSocketClient _client;
-        private SemaphoreSlim _signal;
+        private readonly SemaphoreSlim _signal;
         private string _dir;
 
         public readonly ulong UserId;
